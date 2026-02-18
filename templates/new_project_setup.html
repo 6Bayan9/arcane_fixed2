@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCANE – New Project Setup</title>
+
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---------------- Sidebar ---------------- */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .sidebar-logo span {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-item {
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .step-item:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .step-item.active {
+            background: rgba(255,255,255,0.25);
+            border-left: 5px solid white;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* ---------------- Main Content ---------------- */
+        .content {
+            flex: 1;
+            padding: 40px 60px;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #1e293b;
+        }
+
+        label {
+            font-size: 14px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .upload-zone {
+            border: 2px dashed #667eea;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-zone:hover {
+            background: #667eea15;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+            gap: 20px;
+        }
+
+        .analysis-card {
+            border: 2px solid #cbd5e1;
+            padding: 25px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .analysis-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+        }
+
+        .analysis-card.selected {
+            border-color: #764ba2;
+            background: #764ba220;
+        }
+
+        .btn-next {
+            padding: 14px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+        }
+
+        /* ===== Error Messages ===== */
+.error-text{
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #d93025;
+    font-weight: 500;
+}
+
+.input-error{
+    border: 1.5px solid #d93025 !important;
+    background-color: #fff5f5;
+}
+
+.error-text{
+    animation: fadeInError 0.2s ease-in-out;
+}
+
+@keyframes fadeInError{
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+    </style>
+
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+             <img src="{{ url_for('static', filename='logo.jpg') }}" alt="ARCANE Logo" class="logo-img">
+        </div>
+
+        <div class="step-list">
+            <div class="step-item active" onclick="showStep(1)">
+                <div class="step-title">1. Select Sector</div>
+                <div class="step-desc">Confirm sector for your project</div>
+            </div>
+            <div class="step-item" onclick="showStep(2)">
+                <div class="step-title">2. Project Details</div>
+                <div class="step-desc">Name, description, purpose</div>
+            </div>
+            <div class="step-item" onclick="showStep(3)">
+                <div class="step-title">3. Upload Dataset</div>
+                <div class="step-desc">Upload CSV file</div>
+            </div>
+            <div class="step-item" onclick="showStep(4)">
+                <div class="step-title">4. Analysis Type</div>
+                <div class="step-desc">Select ML approach</div>
+            </div>
+            <div class="step-item" onclick="showStep(5)">
+                <div class="step-title">5. Review & Create</div>
+                <div class="step-desc">Finalize your project</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+        <form action="/save_project" method="POST" enctype="multipart/form-data" 
+            onsubmit="return validateBeforeSubmit()">
+
+
+            {% if error %}
+        <div style="background:#fee2e2;color:#991b1b;padding:12px 14px;border-radius:12px;margin:0 0 14px 0;font-weight:600;">
+        {{ error }}
+       </div>
+       {% endif %}
+            <!-- Step 1 -->
+            <section id="step1" class="section active">
+                <div class="card">
+                    <h2>Selected Sector</h2>
+                    <p style="font-size:18px;color:#475569;">
+                            Your selected sector:
+                    <strong id="sectorName">{{ sector or 'Commerce' }}</strong>
+                    </p>
+
+                   <!-- القيمة اللي تنرسل للباك إند -->
+                <input type="hidden" id="sector_id" name="sector_id" value="{{ sector or 'Commerce' }}"required>
+
+                </div>
+
+                <button type="button" class="btn-next" onclick="showStep(2)">Next</button>
+            </section>
+
+            <!-- Step 2 -->
+            
+<section id="step2" class="section">
+  <div class="card">
+    <h2>Project Details</h2>
+
+    <label for="project_name">Project Name</label>
+<input
+  id="project_name"
+  type="text"
+  name="project_name"
+  class="{% if project_name_error %}input-error{% endif %}"
+  value="{{ project_name or '' }}"
+  placeholder="e.g., Sales Forecasting Model"
+  required
+  minlength="3"
+  maxlength="120"
+  pattern=".*\S.*"
+  title="Please enter at least 3 characters."
+>
+
+<div id="project_name_error" class="error-text">{{ project_name_error }}</div>
+
+
+    <label for="description">Description</label>
+<textarea
+  id="description"
+  name="description"
+  rows="4"
+  class="{% if description_error %}input-error{% endif %}"
+  placeholder="Describe your project goal…"
+  required
+  minlength="10"
+  maxlength="1000"
+  title="Please enter at least 10 characters."
+>{{ description or '' }}</textarea>
+
+<div id="description_error" class="error-text">{{ description_error }}</div>
+
+
+ <button type="button" class="btn-next" onclick="validateStep2()">Next →</button>
+
+</section>
+
+
+            <!-- Step 3 -->
+           <section id="step3" class="section">
+            <div class="card">
+        <h2>Upload Dataset</h2>
+
+        <div class="upload-zone" onclick="document.getElementById('csvInput').click()" style="cursor: pointer; border: 2px dashed                    #667eea; padding: 20px; text-align: center;">
+            <p style="color:#667eea;font-size:22px;">📁 Upload CSV File</p>
+            <p style="color:#64748b;" id="fileNameDisplay">Click to browse from your computer</p>
+        </div>
+
+            <input type="file" id="csvInput" name="dataset" accept=".csv" style="display:none;" onchange="updateFileName(this)"required>
+            <div id="dataset_error" class="error-text">{{ dataset_error or '' }}</div>
+
+
+            <button type="button" class="btn-next" onclick="validateStep3()">Next →</button>
+          </section>
+
+                        <!-- Step 4 -->
+            <section id="step4" class="section">
+                <div class="card">
+                    <h2>Select Analysis Type</h2>
+                    <p style="color:#64748b; margin-bottom:16px; font-size:14px;">Choose the ML approach. Classification and Regression are fully supported.</p>
+
+                    <div class="analysis-grid">
+                        <div class="analysis-card" data-type="Classification" onclick="selectAnalysis(this, 'Classification')">
+                            <div style="font-size:32px;">🧠</div>
+                            <b>Classification</b>
+                            <div style="font-size:12px; color:#10b981; margin-top:6px; font-weight:600;">✅ Available</div>
+                            <div style="font-size:11px; color:#64748b; margin-top:4px;">Predict categories &amp; labels</div>
+                        </div>
+
+                        <div class="analysis-card" data-type="Regression" onclick="selectAnalysis(this, 'Regression')">
+                            <div style="font-size:32px;">📊</div>
+                            <b>Regression</b>
+                            <div style="font-size:12px; color:#10b981; margin-top:6px; font-weight:600;">✅ Available</div>
+                            <div style="font-size:11px; color:#64748b; margin-top:4px;">Predict numeric values</div>
+                        </div>
+
+                        <div class="analysis-card" style="opacity:0.5; cursor:not-allowed;" title="Coming soon">
+                            <div style="font-size:32px;">📈</div>
+                            <b>Forecasting</b>
+                            <div style="font-size:12px; margin-top:6px;"><span style="background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:20px; font-size:11px;">🔒 Soon</span></div>
+                            <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Time-series prediction</div>
+                        </div>
+
+                        <div class="analysis-card" style="opacity:0.5; cursor:not-allowed;" title="Coming soon">
+                            <div style="font-size:32px;">🔍</div>
+                            <b>Clustering</b>
+                            <div style="font-size:12px; margin-top:6px;"><span style="background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:20px; font-size:11px;">🔒 Soon</span></div>
+                            <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Group similar records</div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="analysis_type" id="analysisType">
+                    {% if analysis_error %}
+                        <p style="color:#ef4444; margin-top:10px; font-size:13px;">⚠️ {{ analysis_error }}</p>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-next" onclick="validateStep4()">Next →</button>
+            </section>
+
+            <!-- Step 5 -->
+            <section id="step5" class="section">
+                <div class="card">
+                    <h2>Review & Finalize</h2>
+                    <p style="color:#475569;">Everything looks good. Click below to create your project.</p>
+                </div>
+
+                <button type="submit" class="btn-next">Create Project</button>
+
+            </section>
+
+        </form>
+
+    </main>
+
+   <script>
+  function showStep(n) {
+    document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.step-item')[n - 1].classList.add('active');
+
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+  }
+
+  function selectAnalysis(card, type) {
+    if (!type) return; // disabled cards
+    document.querySelectorAll('.analysis-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    document.getElementById('analysisType').value = type;
+  }
+
+  function updateFileName(input) {
+    const fileName = input.files[0] ? input.files[0].name : "Click to browse from your computer";
+    document.getElementById('fileNameDisplay').innerText = fileName;
+    // امسح رسالة الخطأ إذا اختار ملف
+    const err = document.getElementById('dataset_error');
+    if (err) err.innerText = "";
+  }
+
+  // --------- helpers for inline errors ----------
+  function setFieldError(inputId, errorId, message) {
+    const input = document.getElementById(inputId);
+    const err = document.getElementById(errorId);
+    if (input) input.classList.add('input-error');
+    if (err) err.innerText = message;
+  }
+
+  function clearFieldError(inputId, errorId) {
+    const input = document.getElementById(inputId);
+    const err = document.getElementById(errorId);
+    if (input) input.classList.remove('input-error');
+    if (err) err.innerText = "";
+  }
+
+  // ✅ Step 2 validation: project_name + description required
+  function validateStep2() {
+    const nameEl = document.getElementById('project_name');
+    const descEl = document.getElementById('description');
+
+    const name = (nameEl?.value || "").trim();
+    const desc = (descEl?.value || "").trim();
+
+    let ok = true;
+
+    if (name.length < 3) {
+      setFieldError('project_name', 'project_name_error', 'Project name is required (min 3 characters).');
+      ok = false;
+    } else {
+      clearFieldError('project_name', 'project_name_error');
+    }
+
+    if (desc.length < 10) {
+      setFieldError('description', 'description_error', 'Project description is required (min 10 characters).');
+      ok = false;
+    } else {
+      clearFieldError('description', 'description_error');
+    }
+
+    if (!ok) return;
+    showStep(3);
+  }
+
+  // ✅ Step 3 validation: MUST upload a CSV file
+  function validateStep3() {
+    const input = document.getElementById('csvInput');
+    const err = document.getElementById('dataset_error');
+
+    if (!input || !input.files || input.files.length === 0) {
+      if (err) err.innerText = "Please upload a CSV file before continuing.";
+      return;
+    }
+
+    const name = (input.files[0].name || "").toLowerCase();
+    if (!name.endsWith('.csv')) {
+      if (err) err.innerText = "Only CSV files are allowed.";
+      return;
+    }
+
+    if (err) err.innerText = "";
+    showStep(4);
+  }
+
+  // ✅ Step 4 validation: analysis type required (كما هو عندك)
+  function validateStep4() {
+    const val = (document.getElementById('analysisType').value || '').trim();
+    if (!val) {
+      alert("Please select an analysis type before continuing.");
+      return;
+    }
+    showStep(5);
+  }
+
+  // (اختياري) امسحي الخطأ أول ما المستخدم يكتب
+  document.addEventListener("DOMContentLoaded", () => {
+    const nameEl = document.getElementById("project_name");
+    const descEl = document.getElementById("description");
+    if (nameEl) nameEl.addEventListener("input", () => clearFieldError('project_name', 'project_name_error'));
+    if (descEl) descEl.addEventListener("input", () => clearFieldError('description', 'description_error'));
+  });
+
+       function validateBeforeSubmit() {
+  // Step 2
+  const name = (document.getElementById('project_name')?.value || '').trim();
+  const desc = (document.getElementById('description')?.value || '').trim();
+  if (name.length < 3 || desc.length < 10) {
+    // استخدمي نفس الفالديشن حقك عشان يطلع الرسائل
+    validateStep2();
+    showStep(2);
+    return false;
+  }
+
+  // Step 3
+  const input = document.getElementById('csvInput');
+  if (!input || !input.files || input.files.length === 0) {
+    const err = document.getElementById('dataset_error');
+    if (err) err.innerText = "Please upload a CSV file before creating the project.";
+    showStep(3);
+    return false;
+  }
+  const fname = (input.files[0].name || '').toLowerCase();
+  if (!fname.endsWith('.csv')) {
+    const err = document.getElementById('dataset_error');
+    if (err) err.innerText = "Only CSV files are allowed.";
+    showStep(3);
+    return false;
+  }
+
+  // Step 4 (اختياري لكن منطقي)
+  const analysis = (document.getElementById('analysisType')?.value || '').trim();
+  if (!analysis) {
+    alert("Please select an analysis type before creating the project.");
+    showStep(4);
+    return false;
+  }
+
+  return true; // ✅ اسمح بالإرسال
+}
+
+       window.addEventListener('DOMContentLoaded', () => {
+  const step = parseInt("{{ active_step or 1 }}", 10);
+  showStep(step);
+});
+
+
+</script>
+
+
+</body>
+</html>

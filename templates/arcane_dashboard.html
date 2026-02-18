@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ARCANE Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            margin-bottom: 8px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .menu-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .menu-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 20px 0;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* Top Bar */
+        .topbar {
+            background: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .topbar-left p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .topbar-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 40px 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            width: 300px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #667eea;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .notification-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            color: #667eea;
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #10b98120, #059669 20);
+            color: #059669;
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #f59e0b20, #d9770620);
+            color: #f59e0b;
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #8b5cf620, #6d28d920);
+            color: #8b5cf6;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .stat-change.negative {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .chart-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            gap: 12px;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s;
+            animation: growBar 1s ease-out;
+        }
+
+        @keyframes growBar {
+            from { height: 0; }
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .doughnut-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .doughnut {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #667eea 0deg 144deg,
+                #10b981 144deg 252deg,
+                #f59e0b 252deg 324deg,
+                #8b5cf6 324deg 360deg
+            );
+            position: relative;
+        }
+
+        .doughnut::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .doughnut-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1;
+        }
+
+        .doughnut-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .doughnut-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .doughnut-legend {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-text {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .legend-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-left: auto;
+        }
+
+        /* Projects Section */
+        .projects-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .project-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .project-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+        }
+
+        .project-status {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status-completed {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .project-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .project-desc {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .project-date {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .project-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            width: 60px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 16px 20px;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+
+            .dashboard-content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="logo">
+               <img src="{{ url_for('static', filename='logo.jpg') }}" alt="ARCANE Logo" class="logo-img">
+            </a>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="{{ url_for('dashboard') }}" class="menu-link active">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="{{ url_for('sectors') }}" class="menu-link">
+                    <span class="menu-icon">📂</span>
+                    <span>Projects</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">📈</span>
+                    <span>Analytics</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">🤖</span>
+                    <span>ML Models</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">📄</span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            
+            <div class="menu-divider"></div>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">🛒</span>
+                    <span>Commerce</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">❤️</span>
+                    <span>Healthcare</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">🎓</span>
+                    <span>Education</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">🏛️</span>
+                    <span>Government</span>
+                </a>
+            </li>
+            
+            <div class="menu-divider"></div>
+            
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <span class="menu-icon">💬</span>
+                    <span>Support</span>
+                </a>
+            </li>
+            <li class="menu-item">
+            <a href="{{ url_for('logout') }}" class="menu-link">
+            <span class="menu-item">🚪</span>
+            <span>Logout</span>
+              </a>
+               </li>
+        </ul>
+
+        <div class="user-profile">
+            <div class="user-avatar">AH</div>
+            <div class="user-info">
+                <div class="user-name">ARCANE Team </div>
+                <div class="user-email">{{ session.get('user_email', '') }}</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>Welcome back, {{ session.get('user_name', 'User') }}! 👋</h1>
+                <p>Here's what's happening with your projects today</p>
+            </div>
+            <div class="topbar-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Search projects...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button class="notification-btn">
+                    🔔
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">📂</div>
+                    </div>
+                    <div class="stat-value">{{ total_projects }}</div>
+                    <div class="stat-label">Total Projects</div>
+                    <span class="stat-change positive">Your projects</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green">🤖</div>
+                    </div>
+                    <div class="stat-value">{{ completed_models }}</div>
+                    <div class="stat-label">Trained Models</div>
+                    <span class="stat-change positive">Completed pipelines</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange">📊</div>
+                    </div>
+                    <div class="stat-value">{{ avg_accuracy if avg_accuracy > 0 else '—' }}{% if avg_accuracy > 0 %}%{% endif %}</div>
+                    <div class="stat-label">Avg Accuracy</div>
+                    <span class="stat-change positive">Classification models</span>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon purple">🏷️</div>
+                    </div>
+                    <div class="stat-value">{{ sector_dist | length }}</div>
+                    <div class="stat-label">Sectors Used</div>
+                    <span class="stat-change positive">Across your projects</span>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Model Performance Trends</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn active">Week</button>
+                            <button class="filter-btn">Month</button>
+                            <button class="filter-btn">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="bar-chart">
+                            <div class="bar-item">
+                                <div class="bar" style="height: 75%;"></div>
+                                <div class="bar-label">Mon</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 60%;"></div>
+                                <div class="bar-label">Tue</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 85%;"></div>
+                                <div class="bar-label">Wed</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 55%;"></div>
+                                <div class="bar-label">Thu</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 90%;"></div>
+                                <div class="bar-label">Fri</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 70%;"></div>
+                                <div class="bar-label">Sat</div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar" style="height: 65%;"></div>
+                                <div class="bar-label">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Projects by Sector</h3>
+                    </div>
+                    <div class="chart-container">
+                        <div class="doughnut-chart">
+                            <div class="doughnut">
+                                <div class="doughnut-center">
+                                    <div class="doughnut-value">100%</div>
+                                    <div class="doughnut-label">Total</div>
+                                </div>
+                            </div>
+                            <div class="doughnut-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #667eea;"></div>
+                                    <span class="legend-text">Commerce</span>
+                                    <span class="legend-value">40%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #10b981;"></div>
+                                    <span class="legend-text">Healthcare</span>
+                                    <span class="legend-value">30%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #f59e0b;"></div>
+                                    <span class="legend-text">Education</span>
+                                    <span class="legend-value">20%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #8b5cf6;"></div>
+                                    <span class="legend-text">Government</span>
+                                    <span class="legend-value">10%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="projects-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Projects</h2>
+                    <button class="btn-primary" onclick="window.location.href='{{ url_for('sectors') }}'">+ New Project</button>
+                </div>
+                <div class="projects-grid">
+                    {% if recent_projects %}
+                        {% for p in recent_projects %}
+                        <div class="project-card" onclick="window.location.href='/workspace/{{ p.id }}'" style="cursor:pointer;">
+                            <div class="project-header">
+                                <div class="project-icon">
+                                    {% if p.sector == 'Commerce' %}🛒
+                                    {% elif p.sector == 'Healthcare' %}🏥
+                                    {% elif p.sector == 'Education' %}🎓
+                                    {% elif p.sector == 'Government' %}🏛️
+                                    {% else %}📊{% endif %}
+                                </div>
+                                <span class="project-status {% if p.status == 'completed' %}status-completed{% else %}status-active{% endif %}">
+                                    {{ 'Completed' if p.status == 'completed' else 'Active' }}
+                                </span>
+                            </div>
+                            <h3 class="project-title">{{ p.name }}</h3>
+                            <p class="project-desc">
+                                {{ p.sector or 'General' }} — {{ p.analysis_type or 'Analysis' }}
+                                {% if p.model_accuracy %}
+                                | Accuracy: {{ (p.model_accuracy * 100) | round(1) }}%
+                                {% elif p.model_r2 %}
+                                | R²: {{ p.model_r2 }}
+                                {% endif %}
+                            </p>
+                            <div class="project-footer">
+                                <span class="project-date">📅 {{ p.created_at.strftime('%d %b %Y') if p.created_at else '—' }}</span>
+                                <div class="project-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: {{ '100%' if p.status == 'completed' else '40%' }};"></div>
+                                    </div>
+                                    <span class="progress-text">{{ '100%' if p.status == 'completed' else '—' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="grid-column: span 3; text-align:center; padding: 60px 20px; color:#94a3b8;">
+                            <div style="font-size:48px; margin-bottom:16px;">📂</div>
+                            <h3 style="color:#475569; margin-bottom:8px;">No Projects Yet</h3>
+                            <p style="margin-bottom:20px;">Create your first AI analytics project to get started!</p>
+                            <button class="btn-primary" onclick="window.location.href='{{ url_for('sectors') }}'">
+                                + Create First Project
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Add interactivity
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const notificationBadge = document.querySelector('.notification-badge');
+            let count = parseInt(notificationBadge.textContent);
+            if (Math.random() > 0.8) {
+                count++;
+                notificationBadge.textContent = count;
+            }
+        }, 5000);
+
+        // Project card click
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', function() {
+                alert('Opening project: ' + this.querySelector('.project-title').textContent);
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Projects</title>
+</head>
+<body>
+    <h2>Saved Projects</h2>
+
+    {% if projects and projects|length > 0 %}
+        <ul>
+            {% for p in projects %}
+                <li>
+                    <b>ID:</b> {{ p.id }} |
+                    <b>Sector:</b> {{ p.sector }} |
+                    <b>Name:</b> {{ p.name }} |
+                    <b>Created:</b> {{ p.created_at }}
+                    <br>
+                    <b>Description:</b> {{ p.description }}
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No projects found.</p>
+    {% endif %}
+</body>
+</html>

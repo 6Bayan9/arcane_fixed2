@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workspace - ARCANE Platform</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* ============ Sidebar (matches dashboard theme) ============ */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 26px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-menu { list-style: none; margin-top: 10px; }
+        .menu-item { margin-bottom: 8px; }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            font-size: 14px;
+        }
+        .menu-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .menu-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            font-weight: 700;
+        }
+        .menu-icon { width: 22px; text-align: center; font-size: 18px; }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 18px 0;
+        }
+
+        .user-profile {
+            position: sticky;
+            bottom: 0;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .user-info { flex: 1; }
+        .user-name { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+        .user-email { font-size: 12px; opacity: 0.85; }
+
+        /* ============ Main content ============ */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: white;
+            padding: 18px 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1.15;
+        }
+
+        .topbar-left p {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(102,126,234,0.25); }
+
+        .btn-outline {
+            background: white;
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .btn-outline:hover { background: #667eea; color: white; }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .btn-ghost:hover { background: #e2e8f0; }
+
+        .content {
+            padding: 26px;
+        }
+
+        /* Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #0f172a;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        /* Stat pills */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 18px;
+        }
+
+        .stat {
+            grid-column: span 3;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 18px;
+            transition: all 0.25s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(0,0,0,0.09);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #667eea20, #764ba220); color: #667eea; }
+        .stat-icon.green { background: linear-gradient(135deg, #10b98120, #05966920); color: #059669; }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b20, #d9770620); color: #f59e0b; }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf620, #6d28d920); color: #8b5cf6; }
+
+        .stat-value { font-size: 26px; font-weight: 900; color: #0f172a; }
+        .stat-label { font-size: 12px; color: #64748b; margin-top: 6px; }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .badge-ok { background: #dcfce7; color: #16a34a; }
+        .badge-warn { background: #fef3c7; color: #b45309; }
+        .badge-soon { background: #e2e8f0; color: #334155; }
+        .badge-pro { background: #ede9fe; color: #6d28d9; }
+
+        /* Table */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px 12px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 900;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:hover td { background: #f8fafc; }
+
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .field input[type="text"],
+        .field input[type="file"],
+        .field select {
+            width: 100%;
+            padding: 12px 12px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            outline: none;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .field input:focus, .field select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .checkbox input { width: 18px; height: 18px; }
+        .checkbox .label { font-weight: 900; font-size: 13px; color: #0f172a; }
+        .checkbox .hint { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Chart area */
+        .chart-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            background: #ffffff;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 14px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .stat { grid-column: span 6; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 820px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .stat { grid-column: span 12; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">A</div>
+            <div class="logo-text">ARCANE</div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('dashboard') if dashboard is not none else '#' }}">
+                    <span class="menu-icon">🏠</span> Dashboard
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('sectors') if sectors is not none else '/sectors' }}">
+                    <span class="menu-icon">🧭</span> New Project
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link active" href="#">
+                    <span class="menu-icon">🧪</span> Workspace
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <span class="menu-icon">📄</span> Reports <span class="badge badge-soon" style="margin-left:auto;">Soon</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <span class="menu-icon">⚙️</span> Settings <span class="badge badge-soon" style="margin-left:auto;">Soon</span>
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('auth') if auth is not none else '/auth' }}">
+                    <span class="menu-icon">🚪</span> Logout
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-profile">
+            <div class="user-avatar">
+                {{ user_initial | default('U') }}
+            </div>
+            <div class="user-info">
+                <div class="user-name">{{ user_name | default('User') }}</div>
+                <div class="user-email">{{ user_email | default('user@email.com') }}</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>{{ project_name | default('Project Workspace') }}</h1>
+                <p>
+                    Sector: <b>{{ sector_name | default('Not selected') }}</b>
+                    &nbsp;•&nbsp;
+                    Analysis: <b>{{ analysis_type | default('Regression') }}</b>
+                    &nbsp;•&nbsp;
+                    Status:
+                    {% if dataset_uploaded %}
+                        <span class="badge badge-ok">✅ Dataset Ready</span>
+                    {% else %}
+                        <span class="badge badge-warn">⚠️ Upload Dataset</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="topbar-right">
+                <button class="btn btn-ghost" type="button" onclick="window.history.back()">← Back</button>
+
+                <!-- Export (later: connect to /export_report?project_id=...) -->
+                <button class="btn btn-outline" type="button"
+                        {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                        onclick="alert('Export Report will be connected later ✅')">
+                    Export Report
+                </button>
+
+                <!-- Save (later: connect to DB) -->
+                <button class="btn btn-primary" type="button" onclick="alert('Saved (demo) ✅')">
+                    Save
+                </button>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <!-- Quick Stats -->
+            <div class="stats" style="margin-bottom:18px;">
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_name | default('—') }}</div>
+                            <div class="stat-label">Dataset File</div>
+                        </div>
+                        <div class="stat-icon blue">📦</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_rows | default('0') }}</div>
+                            <div class="stat-label">Rows</div>
+                        </div>
+                        <div class="stat-icon green">📈</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_cols | default('0') }}</div>
+                            <div class="stat-label">Columns</div>
+                        </div>
+                        <div class="stat-icon purple">🧩</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">
+                                {% if analysis_type in ['Forecasting', 'Clustering'] %}
+                                    <span class="badge badge-pro">PRO</span>
+                                {% else %}
+                                    <span class="badge badge-ok">ACTIVE</span>
+                                {% endif %}
+                            </div>
+                            <div class="stat-label">Mode</div>
+                        </div>
+                        <div class="stat-icon orange">🛠️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row: Dataset + Preprocessing -->
+            <div class="grid">
+                <!-- Dataset Overview / Upload -->
+                <div class="card" style="grid-column: span 7;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">1) Dataset Overview</div>
+                            <div class="card-subtitle">
+                                Upload CSV (if not uploaded) and preview the first rows. This satisfies the dataset requirement in the activity flow.
+                            </div>
+                        </div>
+                        {% if dataset_uploaded %}
+                            <span class="badge badge-ok">✅ Uploaded</span>
+                        {% else %}
+                            <span class="badge badge-warn">⚠️ Required</span>
+                        {% endif %}
+                    </div>
+
+                    {% if not dataset_uploaded %}
+                        <form method="POST" action="{{ upload_action | default('#') }}" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="field">
+                                    <label>CSV File</label>
+                                    <input type="file" name="dataset" accept=".csv" />
+                                </div>
+
+                                <div class="field">
+                                    <label>Notes (optional)</label>
+                                    <input type="text" name="dataset_note" placeholder="e.g., Sales dataset - 2024 Q4" />
+                                </div>
+                            </div>
+
+                            <div class="actions">
+                                <button class="btn btn-primary" type="submit" onclick="return confirm('Upload route will be connected later ✅')">
+                                    Upload Dataset
+                                </button>
+                                <span class="muted">Allowed format: CSV only.</span>
+                            </div>
+                        </form>
+
+                        <div class="divider"></div>
+                        <p class="muted">
+                            After connecting Flask, this section will validate file type, store dataset info in DB, and generate the preview table automatically.
+                        </p>
+                    {% else %}
+                        <div class="muted" style="margin-bottom:10px;">
+                            <b>File:</b> {{ dataset_name | default('dataset.csv') }}
+                            &nbsp;•&nbsp;
+                            <b>Uploaded:</b> {{ dataset_uploaded_at | default('—') }}
+                        </div>
+
+                        <div class="table-wrap">
+                            {% if preview_headers and preview_rows %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            {% for h in preview_headers %}
+                                                <th>{{ h }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in preview_rows %}
+                                            <tr>
+                                                {% for h in preview_headers %}
+                                                    <td>{{ row[h] }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <div style="padding:14px;">
+                                    <p class="muted">Preview will appear here after connecting CSV parsing (pandas) in Flask.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Preprocessing -->
+                <div class="card" style="grid-column: span 5;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">2) Preprocessing (Simple)</div>
+                            <div class="card-subtitle">
+                                Keep it minimal: missing values + duplicates. Everything else is optional “Soon”.
+                            </div>
+                        </div>
+                        <span class="badge badge-soon">Lightweight</span>
+                    </div>
+
+                    <form method="POST" action="{{ preprocess_action | default('#') }}">
+                        <div class="checkbox">
+                            <input type="checkbox" name="handle_missing" {% if handle_missing %} checked {% endif %} />
+                            <div>
+                                <div class="label">Handle Missing Values</div>
+                                <div class="hint">Drop rows or fill values (we’ll choose the simplest method later).</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox">
+                            <input type="checkbox" name="remove_duplicates" {% if remove_duplicates %} checked {% endif %} />
+                            <div>
+                                <div class="label">Remove Duplicates</div>
+                                <div class="hint">Remove duplicate rows for cleaner analysis.</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox" style="opacity:0.75;">
+                            <input type="checkbox" disabled />
+                            <div>
+                                <div class="label">Correlation Analysis <span class="badge badge-soon" style="margin-left:8px;">Soon</span></div>
+                                <div class="hint">Optional advanced feature.</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox" style="opacity:0.75;">
+                            <input type="checkbox" disabled />
+                            <div>
+                                <div class="label">Outlier Detection <span class="badge badge-soon" style="margin-left:8px;">Soon</span></div>
+                                <div class="hint">Optional advanced feature.</div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button class="btn btn-primary" type="submit"
+                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                                    onclick="return confirm('Preprocessing route will be connected later ✅')">
+                                Apply Preprocessing
+                            </button>
+                            <button class="btn btn-outline" type="button"
+                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                                    onclick="alert('Reset (demo) ✅')">
+                                Reset
+                            </button>
+                        </div>
+
+                        {% if preprocess_message %}
+                            <div style="margin-top:12px;">
+                                <span class="badge badge-ok">✅</span>
+                                <span class="muted">{{ preprocess_message }}</span>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results + Chart -->
+            <div class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">3) EDA &amp; Visualization</div>
+                            <div class="card-subtitle">Distribution of the primary numeric column in your dataset.</div>
+                        </div>
+                        {% if pipeline_done %}
+                            <span class="badge badge-ok">✅ Ready</span>
+                        {% else %}
+                            <span class="badge badge-warn">⚠️ Waiting for dataset</span>
+                        {% endif %}
+                    </div>
+
+                    {% if not dataset_uploaded %}
+                        <p class="muted">Upload a CSV to generate the chart automatically.</p>
+                    {% else %}
+                        <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+                            <!-- Chart -->
+                            <div style="flex:2; min-width:300px;">
+                                <div class="card-subtitle" style="margin-bottom:8px;">
+                                    Column: <b>{{ chart_column | default('—') }}</b>
+                                </div>
+                                <div class="chart-box" style="position:relative; height:260px;">
+                                    <canvas id="arcaneChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- EDA Stats -->
+                            {% if result %}
+                            <div style="flex:1; min-width:200px;">
+                                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                    <tr style="background:#f1f5f9;"><td style="padding:8px 10px; font-weight:600;">Metric</td><td style="padding:8px 10px; font-weight:600;">Value</td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">Total Rows</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.rows_count }}</b></td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">Columns</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.cols_count }}</b></td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">Missing (before)</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">{{ result.missing_before }}</td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">Missing (after)</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">{{ result.missing_after }}</td></tr>
+                                    <tr><td style="padding:7px 10px;">Duplicates Removed</td><td style="padding:7px 10px;">{{ result.duplicates_removed }}</td></tr>
+                                </table>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ML Results -->
+            {% if pipeline_done and result %}
+            <div class="grid">
+                <!-- Model Metrics -->
+                <div class="card" style="grid-column: span 6;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">4) Model Results — {{ analysis_type }}</div>
+                            <div class="card-subtitle">Random Forest trained on 80% of data, tested on 20%.</div>
+                        </div>
+                        <span class="badge badge-ok">✅ Trained</span>
+                    </div>
+
+                    {% if analysis_type == 'Classification' %}
+                        <table style="width:100%; font-size:14px; border-collapse:collapse; margin-top:10px;">
+                            <tr style="background:#f1f5f9;">
+                                <td style="padding:10px; font-weight:600;">Metric</td>
+                                <td style="padding:10px; font-weight:600;">Score</td>
+                                <td style="padding:10px; font-weight:600;">Bar</td>
+                            </tr>
+                            {% for metric, val in [
+                                ('Accuracy',  result.model_accuracy),
+                                ('Precision', result.model_precision),
+                                ('Recall',    result.model_recall),
+                                ('F1 Score',  result.model_f1)
+                            ] %}
+                            {% if val is not none %}
+                            <tr>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;">{{ metric }}</td>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ (val * 100) | round(1) }}%</b></td>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;">
+                                    <div style="height:8px; background:#e2e8f0; border-radius:4px; width:140px;">
+                                        <div style="height:8px; background: linear-gradient(90deg,#667eea,#764ba2); border-radius:4px; width:{{ (val*100)|int }}%;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </table>
+
+                    {% elif analysis_type == 'Regression' %}
+                        <table style="width:100%; font-size:14px; border-collapse:collapse; margin-top:10px;">
+                            <tr style="background:#f1f5f9;">
+                                <td style="padding:10px; font-weight:600;">Metric</td>
+                                <td style="padding:10px; font-weight:600;">Value</td>
+                            </tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;">R² Score</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_r2 }}</b></td></tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;">MSE</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_mse }}</b></td></tr>
+                            <tr><td style="padding:9px 10px;">MAE</td><td style="padding:9px 10px;"><b>{{ result.model_mae }}</b></td></tr>
+                        </table>
+                    {% endif %}
+                </div>
+
+                <!-- Feature Importance -->
+                <div class="card" style="grid-column: span 6;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">5) Feature Importance</div>
+                            <div class="card-subtitle">Top features influencing the model predictions.</div>
+                        </div>
+                    </div>
+                    {% if feature_importance %}
+                        <div style="margin-top:10px;">
+                            <canvas id="featureChart" height="200"></canvas>
+                        </div>
+                    {% else %}
+                        <p class="muted" style="margin-top:12px;">Feature importance will appear after running the pipeline.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        {% if dataset_uploaded and not pipeline_done %}
+                            <form method="POST" action="/run_pipeline/{{ project_id }}" id="runForm">
+                                <button class="btn btn-primary" type="submit" onclick="showLoading()">
+                                    🚀 Run Pipeline
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if pipeline_done %}
+                            <span class="badge badge-ok" style="padding:10px 16px; font-size:13px;">✅ Pipeline Completed</span>
+                        {% endif %}
+
+                        <button class="btn btn-outline" onclick="window.location.href='/dashboard'">← Back to Dashboard</button>
+
+                        <span style="background:#ede9fe; color:#6d28d9; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600;">
+                            🔒 Forecasting & Clustering — Pro (Soon)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="muted" style="text-align:center; padding:10px 0 20px;">
+                ARCANE • AI-Powered Analytics Platform • University of Tabuk 2025
+            </p>
+
+        </section>
+    </main>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // EDA Distribution Chart
+        (function () {
+            const hasData = {{ 'true' if chart_data else 'false' }};
+            const labels  = hasData ? {{ chart_labels | safe }} : ['A','B','C','D','E'];
+            const data    = hasData ? {{ chart_data   | safe }} : [4,7,3,9,5];
+            const ctx = document.getElementById('arcaneChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '{{ chart_column | default("Value") }}',
+                        data: data,
+                        backgroundColor: 'rgba(102,126,234,0.7)',
+                        borderColor: '#667eea',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        })();
+
+        // Feature Importance Chart
+        {% if feature_importance %}
+        (function () {
+            const fi = {{ feature_importance | safe }};
+            const labels = Object.keys(fi);
+            const data   = Object.values(fi).map(v => (v * 100).toFixed(1));
+            const ctx = document.getElementById('featureChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Importance (%)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(102,126,234,0.8)','rgba(118,75,162,0.8)',
+                            'rgba(16,185,129,0.8)','rgba(245,158,11,0.8)',
+                            'rgba(239,68,68,0.8)','rgba(59,130,246,0.8)',
+                            'rgba(168,85,247,0.8)','rgba(20,184,166,0.8)'
+                        ],
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, max: 100 } }
+                }
+            });
+        })();
+        {% endif %}
+
+        function showLoading() {
+            const btn = document.querySelector('#runForm button');
+            if (btn) { btn.textContent = '⏳ Running...'; btn.disabled = true; }
+        }
+    </script>
+
+</body>
+</html>
