@@ -1043,6 +1043,7 @@ function handleSignup(event) {
         return;
     }
 
+
     const form = document.getElementById('signupForm');
     const fd = new FormData(form);
     const submitBtn = form.querySelector('button[type="submit"]');
@@ -1057,10 +1058,13 @@ function handleSignup(event) {
             return data;
         })
         .then((data) => {
-            if (data.success) {
-                window.location.href = data.redirect;
-            }
-        })
+    if (data.success && data.registered) {
+        showSuccessToast(data.message);
+        setTimeout(() => {
+            window.location.href = data.redirect;
+        }, 2500);
+    }
+})
         .catch((err) => {
             // أرجع الزر لحالته الطبيعية
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Create Account'; }
@@ -1099,6 +1103,20 @@ function handleSignup(event) {
                 generalError.textContent = '⚠️ ' + message;
             }
         });
+}
+function showSuccessToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed; top: 30px; left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white; padding: 16px 32px; border-radius: 12px;
+        font-size: 15px; font-weight: 600;
+        box-shadow: 0 8px 32px rgba(16,185,129,0.4);
+        z-index: 9999; text-align: center;
+    `;
+    toast.innerHTML = message + '<br><span style="font-size:12px;opacity:0.85;">Redirecting to Sign In...</span>';
+    document.body.appendChild(toast);
 }
 
 document.getElementById('signupName').addEventListener('input', checkFormValidity);

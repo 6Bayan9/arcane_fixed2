@@ -119,11 +119,11 @@ def signup():
         return jsonify(success=False, field="email", message="Email already exists"), 409
 
     user_id = create_user(name, email, password)
-    session.clear()
-    session["user_id"]    = user_id
-    session["user_name"]  = name
-    session["user_email"] = email
-    return jsonify(success=True, redirect=url_for("dashboard")), 200
+    return jsonify(
+    success=True,
+    registered=True,
+    message=f"🎉 Account created successfully! Welcome, {name}. Please sign in to continue.",
+    redirect=url_for("auth") + "?mode=signin&registered=1"), 200
 
 
 @app.route("/signin", methods=["POST"])
