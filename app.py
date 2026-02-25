@@ -198,6 +198,10 @@ def workspace(project_id):
         except Exception:
             pass
 
+    user_name  = session.get("user_name", "المستخدم")
+    user_email = session.get("user_email", "")
+    user_initial = user_name[0].upper() if user_name else "م"
+
     return render_template(
         "Demoarcane_project_workspace.html",
         project_id       = project_id,
@@ -216,6 +220,9 @@ def workspace(project_id):
         result           = result,
         feature_importance = json.dumps(feature_importance) if feature_importance else None,
         pipeline_done    = bool(result),
+        user_name        = user_name,
+        user_email       = user_email,
+        user_initial     = user_initial,
     )
 
 # =========================
