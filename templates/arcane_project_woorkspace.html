@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Workspace - ARCANE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .project-info h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            background: #059669;
+        }
+
+        .btn-export {
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Main Layout */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        /* Left Sidebar - Steps */
+        .steps-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .step-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-item:hover {
+            background: #f8fafc;
+        }
+
+        .step-item.active {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-left: 4px solid #667eea;
+        }
+
+        .step-item.completed {
+            background: #dcfce7;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .step-item.active .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .step-item.completed .step-number {
+            background: #10b981;
+            color: white;
+        }
+
+        .step-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .step-info p {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Upload Section */
+        .upload-zone {
+            border: 3px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #667eea10;
+        }
+
+        .upload-zone.dragover {
+            border-color: #667eea;
+            background: #667eea20;
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .upload-zone p {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .btn-browse {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-browse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-info {
+            display: none;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .file-size {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Data Preview Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* Preprocessing Options */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .option-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .option-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .option-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .option-icon {
+            font-size: 32px;
+        }
+
+        .option-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .option-card.selected .option-checkbox {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        .option-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .option-card p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Visualization Types */
+        .viz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .viz-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .viz-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+        }
+
+        .viz-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .viz-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Chart Preview */
+        .chart-preview {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 20px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        /* ML Algorithm Cards */
+        .algo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .algo-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .algo-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .algo-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea10, #764ba210);
+        }
+
+        .algo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .algo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .algo-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .algo-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .algo-card p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .algo-metrics {
+            display: flex;
+            gap: 15px;
+        }
+
+        .metric-item {
+            flex: 1;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Training Progress */
+        .training-container {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .training-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .training-container h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .training-container p {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 6px;
+            transition: width 0.3s;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0%, 100% { width: 30%; }
+            50% { width: 70%; }
+        }
+
+        .training-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .training-stat {
+            text-align: center;
+        }
+
+        .training-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .training-stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Results Section */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+
+        .result-card.highlight {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #dcfce7, #d1fae5);
+        }
+
+        .result-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .workspace {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .steps-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .option-grid, .viz-grid, .algo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn" onclick="history.back()">←</button>
+            <div class="project-info">
+                <h1>Sales Forecasting Model</h1>
+                <div class="project-meta">
+                    <span>📂 Commerce</span>
+                    <span>📅 Created: Oct 10, 2025</span>
+                    <span>⏱️ Last updated: 2 hours ago</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn-save">💾 Save Progress</button>
+            <button class="btn-export">📤 Export Report</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        
+        <!-- Steps Sidebar -->
+        <aside class="steps-sidebar">
+            <div class="step-item completed" onclick="showStep(1)">
+                <div class="step-number">✓</div>
+                <div class="step-info">
+                    <h3>Upload Data</h3>
+                    <p>CSV file uploaded</p>
+                </div>
+            </div>
+
+            <div class="step-item completed" onclick="showStep(2)">
+                <div class="step-number">✓</div>
+                <div class="step-info">
+                    <h3>Data Preview</h3>
+                    <p>Review your dataset</p>
+                </div>
+            </div>
+
+            <div class="step-item active" onclick="showStep(3)">
+                <div class="step-number">3</div>
+                <div class="step-info">
+                    <h3>Preprocessing</h3>
+                    <p>Clean & prepare data</p>
+                </div>
+            </div>
+
+            <div class="step-item" onclick="showStep(4)">
+                <div class="step-number">4</div>
+                <div class="step-info">
+                    <h3>Visualization</h3>
+                    <p>Create charts</p>
+                </div>
+            </div>
+
+            <div class="step-item" onclick="showStep(5)">
+                <div class="step-number">5</div>
+                <div class="step-info">
+                    <h3>ML Training</h3>
+                    <p>Train your model</p>
+                </div>
+            </div>
+
+            <div class="step-item" onclick="showStep(6)">
+                <div class="step-number">6</div>
+                <div class="step-info">
+                    <h3>Results</h3>
+                    <p>View predictions</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area" id="contentArea">
+            
+            <!-- STEP 1: Upload Data -->
+            <div class="step-content" id="step1" style="display: none;">
+                <div class="content-card">
+                    <div class="content-header">
+                        <h2 class="content-title">Upload Your Dataset</h2>
+                    </div>
+
+                    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                        <div class="upload-icon">📁</div>
+                        <h3>Drag & Drop your CSV file here</h3>
+                        <p>or click to browse from your computer</p>
+                        <button class="btn-browse">Browse Files</button>
+                        <input type="file" id="fileInput" accept=".csv" style="display: none;" onchange="handleFileUpload(event)">
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <div class="file-details">
+                            <div>
+                                <div class="file-name">📄 sales_data_2025.csv</div>
+                                <div class="file-size">2.5 MB • 10,523 rows • 15 columns</div>
+                            </div>
+                            <button class="btn-primary" onclick="showStep(2)">✓ Continue to Preview</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Data Preview -->
+            <div class="step-content" id="step2" style="display: none;">
+                <div class="content-card">
+                    <div class="content-header">
+                        <h2 class="content-title">Data Preview</h2>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">10,523</div>
+                            <div class="stat-label">Total Rows</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Columns</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">2.5 MB</div>
+                            <div class="stat-label">File Size</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">98.5%</div>
+                            <div class="stat-label">Data Quality</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Revenue</th>
+                                    <th>Region</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-01-15</td>
+                                    <td>Laptop Pro</td>
+                                    <td>Electronics</td>
+                                    <td>$1,299</td>
+                                    <td>45</td>
+                                    <td>$58,455</td>
+                                    <td>North</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-01-16</td>
+                                    <td>Wireless Mouse</td>
+                                    <td>Accessories</td>
+                                    <td>$29</td>
+                                    <td>230</td>
+                                    <td>$6,670</td>
+                                    <td>South</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-01-17</td>
+                                    <td>Monitor 4K</td>
+                                    <td>Electronics</td>
+                                    <td>$499</td>
+                                    <td>67</td>
+                                    <td>$33,433</td>
+                                    <td>East</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-01-18</td>
+                                    <td>Keyboard RGB</td>
+                                    <td>Accessories</td>
+                                    <td>$89</td>
+                                    <td>156</td>
+                                    <td>$13,884</td>
+                                    <td>West</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-01-19</td>
+                                    <td>Headphones Pro</td>
+                                    <td>Audio</td>
+                                    <td>$199</td>
+                                    <td>98</td>
+                                    <td>$19,502</td>
+                                    <td>North</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="showStep(1)">← Back</button>
+                        <button class="btn-primary" onclick="showStep(3)">Continue to Preprocessing →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Preprocessing -->
+            <div class="step-content" id="step3">
+                <div class="content-card">
+                    <div class="content-header">
+                        <h2 class="content-title">Data Preprocessing</h2>
+                    </div>
+
+                    <p style="color: #64748b; margin-bottom: 20px;">Select the preprocessing operations you want to apply:</p>
+
+                    <div class="option-grid">
+                        <div class="option-card selected" onclick="toggleOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🧹</div>
+                                <div class="option-checkbox">✓</div>
+                            </div>
+                            <h3>Handle Missing Values</h3>
+                            <p>Automatically fill or remove missing data points using mean, median, or mode imputation.</p>
+                        </div>
+
+                        <div class="option-card selected" onclick="toggleOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🔄</div>
+                                <div class="option-checkbox">✓</div>
+                            </div>
+                            <h3>Remove Duplicates</h3>
+                            <p>Identify and remove duplicate rows to ensure data integrity and accuracy.</p>
+                        </div>
+
+                        <div class="option-card" onclick="toggleOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">⚠️</div>
+                                <div class="option-checkbox"></div>
+                            </div>
+                            <h3>Detect Outliers</h3>
+                            <p>Find and handle anomalies in your data using statistical methods (IQR, Z-score).</p>
+                        </div>
+
+                        <div class="option-card selected" onclick="toggleOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">🔗</div>
+                                <div class="option-checkbox">✓</div>
+                            </div>
+                            <h3>Correlation Analysis</h3>
+                            <p>Analyze relationships between variables to understand data dependencies.</p>
+                        </div>
+
+                        <div class="option-card selected" onclick="toggleOption(this)">
+                            <div class="option-header">
+                                <div class="option-icon">⭐</div>
+                                <div class="option-checkbox">✓</div>
+                            </div>
+                            

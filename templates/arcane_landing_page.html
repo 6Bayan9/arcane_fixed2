@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCANE - AI Analytics Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+                width: 90px;
+                height: 90px;
+                object-fit: contain;
+                border-radius: 8px;
+            }
+
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .btn-login {
+            padding: 8px 20px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            color: #667eea !important;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #667eea;
+            color: white !important;
+        }
+
+        .btn-signup {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            color: white !important;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            padding: 15px 35px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            padding: 15px 35px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-item h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .dashboard-preview {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
+            background: white;
+            padding: 20px;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .preview-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .preview-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .preview-content {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .preview-chart {
+            height: 100px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            animation: grow 2s ease-in-out infinite;
+        }
+
+        .bar1 { left: 20px; height: 60%; animation-delay: 0s; }
+        .bar2 { left: 60px; height: 80%; animation-delay: 0.2s; }
+        .bar3 { left: 100px; height: 45%; animation-delay: 0.4s; }
+        .bar4 { left: 140px; height: 90%; animation-delay: 0.6s; }
+
+        @keyframes grow {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.1); }
+        }
+
+        /* Features Section */
+        .features {
+            background: white;
+            padding: 100px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            color: #64748b;
+        }
+
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Sectors Section */
+        .sectors {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 100px 20px;
+        }
+
+        .sectors-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .sector-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .sector-card:hover {
+            transform: scale(1.05);
+        }
+
+        .sector-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .sector-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .sector-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 100px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer p, .footer a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            background: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid, .sectors-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="{{ url_for('static', filename='logo.jpg') }}" alt="ARCANE Logo" class="logo-img">
+
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#sectors">Sectors</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="{{ url_for('auth') }}" class="btn-login">Sign In</a></li>
+                <li><a href="{{ url_for('auth') }}" class="btn-signup">Sign Up</a></li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Transform Data into <span class="gradient-text">Intelligent Decisions</span></h1>
+                <p>AI-powered analytics platform for Commerce, Healthcare, Education & Government. No coding required.</p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('auth') }}" class="btn-primary">🚀 Start Free</a>
+                    <a href="#" class="btn-secondary">▶️ Watch Demo</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3>10K+</h3>
+                        <p>Active Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>50K+</h3>
+                        <p>Projects</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>94.5%</h3>
+                        <p>Accuracy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="dashboard-preview">
+                    <div class="preview-header">
+                        <div class="preview-dot dot-red"></div>
+                        <div class="preview-dot dot-yellow"></div>
+                        <div class="preview-dot dot-green"></div>
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-card">
+                            <h4 style="margin-bottom: 10px; color: #1e293b;">📊 Analytics Dashboard</h4>
+                            <div class="preview-chart">
+                                <div class="chart-bar bar1"></div>
+                                <div class="chart-bar bar2"></div>
+                                <div class="chart-bar bar3"></div>
+                                <div class="chart-bar bar4"></div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="preview-card">
+                                <div style="color: #667eea; font-size: 24px; font-weight: bold;">2.5M</div>
+                                <div style="color: #64748b; font-size: 12px;">Total Sales</div>
+                            </div>
+                            <div class="preview-card">
+                                <div style="color: #27c93f; font-size: 24px; font-weight: bold;">+15%</div>
+                                <div style="color: #64748b; font-size: 12px;">Growth</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Powerful Features</h2>
+            <p>Everything you need for intelligent data analytics</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📤</div>
+                <h3>Easy Data Upload</h3>
+                <p>Drag & drop CSV files. Automatic validation and preview in seconds.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧹</div>
+                <h3>Smart Preprocessing</h3>
+                <p>Handle missing values, duplicates, and outliers automatically with AI.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Interactive Visualization</h3>
+                <p>Create stunning charts and dashboards without any coding knowledge.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Models</h3>
+                <p>Train machine learning models with high accuracy predictions instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Bilingual Support</h3>
+                <p>Full Arabic & English interface for seamless global experience.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Reliable</h3>
+                <p>Enterprise-grade security. Your data is always protected and private.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sectors Section -->
+    <section class="sectors" id="sectors">
+        <div class="section-header">
+            <h2>Built for Multiple Sectors</h2>
+            <p>Specialized dashboards tailored to your industry needs</p>
+        </div>
+        <div class="sectors-grid">
+            <div class="sector-card">
+                <div class="sector-icon">🛒</div>
+                <h3>Commerce</h3>
+                <p>Sales forecasting, inventory management, and customer behavior insights</p>
+            </div>
+            <div class="sector-card">
+                <div class="sector-icon">❤️</div>
+                <h3>Healthcare</h3>
+                <p>Disease prediction, patient management, and resource optimization</p>
+            </div>
+            <div class="sector-card">
+                <div class="sector-icon">🎓</div>
+                <h3>Education</h3>
+                <p>Student performance analysis, early intervention, and learning analytics</p>
+            </div>
+            <div class="sector-card">
+                <div class="sector-icon">🏛️</div>
+                <h3>Government</h3>
+                <p>Policy decisions, service optimization, and citizen satisfaction tracking</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Ready to Transform Your Data?</h2>
+        <p>Join thousands of organizations making smarter decisions with ARCANE</p>
+        <a href="#" class="btn-primary" style="background: white; color: #667eea;">🚀 Start Your Free Trial</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div>
+                <h4>🧠 ARCANE</h4>
+                <p>AI-powered analytics platform for intelligent decision-making across multiple sectors.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon">𝕏</a>
+                    <a href="#" class="social-icon">in</a>
+                    <a href="#" class="social-icon">📘</a>
+                </div>
+            </div>
+            <div>
+                <h4>Product</h4>
+                <a href="#">Features</a>
+                <a href="#">Documentation</a>
+                <a href="#">API</a>
+                <a href="#">Support</a>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <a href="#">About Us</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+            </div>
+            <div>
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 ARCANE Platform. All rights reserved. | University of Tabuk</p>
+        </div>
+    </footer>
+
+</body>
+</html>

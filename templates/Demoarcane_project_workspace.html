@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workspace - ARCANE Platform</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, 'Cairo', 'Noto Kufi Arabic', Arial, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            direction: ltr;
+        }
+
+        /* ============ Sidebar (matches dashboard theme) ============ */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+            z-index: 200;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 26px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #667eea;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-menu { list-style: none; margin-top: 10px; }
+        .menu-item { margin-bottom: 8px; }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+            font-size: 14px;
+        }
+        .menu-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        .menu-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            font-weight: 700;
+        }
+        .menu-icon { width: 22px; text-align: center; font-size: 18px; }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 18px 0;
+        }
+
+        .user-profile {
+            position: sticky;
+            bottom: 0;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .user-info { flex: 1; }
+        .user-name { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+        .user-email { font-size: 12px; opacity: 0.85; }
+
+        /* ============ Main content ============ */
+        .main-content {
+            margin-right: 260px;
+            min-height: 100vh;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: white;
+            padding: 18px 26px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left h1 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1.15;
+        }
+
+        .topbar-left p {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(102,126,234,0.25); }
+
+        .btn-outline {
+            background: white;
+            border-color: #667eea;
+            color: #667eea;
+        }
+        .btn-outline:hover { background: #667eea; color: white; }
+
+        .btn-ghost {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .btn-ghost:hover { background: #e2e8f0; }
+
+        /* ===== Language Toggle ===== */
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 3px;
+            border: 2px solid #e2e8f0;
+            gap: 0;
+        }
+        .lang-btn {
+            padding: 6px 13px;
+            border-radius: 7px;
+            border: none;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: #64748b;
+            letter-spacing: 0.3px;
+        }
+        .lang-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+        }
+        .lang-btn:not(.active):hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .content {
+            padding: 26px;
+        }
+
+        /* Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #0f172a;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+
+        /* Stat pills */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 18px;
+        }
+
+        .stat {
+            grid-column: span 3;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 18px;
+            transition: all 0.25s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(0,0,0,0.09);
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #667eea20, #764ba220); color: #667eea; }
+        .stat-icon.green { background: linear-gradient(135deg, #10b98120, #05966920); color: #059669; }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b20, #d9770620); color: #f59e0b; }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf620, #6d28d920); color: #8b5cf6; }
+
+        .stat-value { 
+            font-size: 22px; 
+            font-weight: 900; 
+            color: #0f172a; 
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            line-height: 1.3;
+        }
+        .stat-label { font-size: 12px; color: #64748b; margin-top: 6px; }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .badge-ok { background: #dcfce7; color: #16a34a; }
+        .badge-warn { background: #fef3c7; color: #b45309; }
+        .badge-soon { background: #e2e8f0; color: #334155; }
+        .badge-pro { background: #ede9fe; color: #6d28d9; }
+
+        /* Table */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px 12px;
+            text-align: right;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 900;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:hover td { background: #f8fafc; }
+
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .field input[type="text"],
+        .field input[type="file"],
+        .field select {
+            width: 100%;
+            padding: 12px 12px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            outline: none;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .field input:focus, .field select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .checkbox input { width: 18px; height: 18px; }
+        .checkbox .label { font-weight: 900; font-size: 13px; color: #0f172a; }
+        .checkbox .hint { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Chart area */
+        .chart-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            background: #ffffff;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 14px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .stat { grid-column: span 6; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 820px) {
+            .sidebar { transform: translateX(100%); }
+            .main-content { margin-right: 0; }
+            .stat { grid-column: span 12; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">A</div>
+            <div class="logo-text">ARCANE</div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('dashboard') if dashboard is not none else '#' }}">
+                    <span class="menu-icon">🏠</span> <span data-ar="الرئيسية" data-en="Dashboard">الرئيسية</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('sectors') if sectors is not none else '/sectors' }}">
+                    <span class="menu-icon">🧭</span> <span data-ar="مشروع جديد" data-en="New Project">مشروع جديد</span>
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link active" href="#">
+                    <span class="menu-icon">🧪</span> <span data-ar="مساحة العمل" data-en="Workspace">مساحة العمل</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <span class="menu-icon">📄</span> <span data-ar="التقارير" data-en="Reports">التقارير</span> <span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="margin-right:auto;">قريباً</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a class="menu-link" href="#">
+                    <span class="menu-icon">⚙️</span> <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span> <span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="margin-right:auto;">قريباً</span>
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a class="menu-link" href="{{ url_for('auth') if auth is not none else '/auth' }}">
+                    <span class="menu-icon">🚪</span> <span data-ar="تسجيل الخروج" data-en="Logout">تسجيل الخروج</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="user-profile">
+            <div class="user-avatar">
+                {{ user_initial | default('م') }}
+            </div>
+            <div class="user-info">
+                <div class="user-name">{{ user_name | default('User') }}</div>
+                <div class="user-email">
+                    <a href="/cdn-cgi/l/email-protection#700b0b50050315022f151d11191c500c5014151611051c0458570503150230151d11191c5e131f1d5759500d0d" style="color: inherit; text-decoration: none; opacity: 0.85;">
+                        {{ user_email | default('<span class="__cf_email__" data-cfemail="0b7e786e794b6e666a626725686466">[email&#160;protected]</span>') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>{{ project_name | default('Workspace') }}</h1>
+                <p>
+                    <span data-ar="القطاع:" data-en="Sector:">القطاع:</span> <b>{{ sector_name | default('غير محدد') }}</b>
+                    &nbsp;•&nbsp;
+                    <span data-ar="نوع التحليل:" data-en="Analysis:">نوع التحليل:</span> <b>{{ analysis_type | default('الانحدار') }}</b>
+                    &nbsp;•&nbsp;
+                    <span data-ar="الحالة:" data-en="Status:">الحالة:</span>
+                    {% if dataset_uploaded %}
+                        <span class="badge badge-ok" data-ar="✅ البيانات جاهزة" data-en="✅ Dataset Ready">✅ البيانات جاهزة</span>
+                    {% else %}
+                        <span class="badge badge-warn" data-ar="⚠️ رفع البيانات" data-en="⚠️ Upload Dataset">⚠️ رفع البيانات</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="topbar-right">
+                <!-- Language Toggle -->
+                <div class="lang-toggle">
+                    <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">عربي</button>
+                    <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+                </div>
+
+                <button class="btn btn-ghost" type="button" onclick="window.history.back()" data-ar="→ رجوع" data-en="← Back">→ رجوع</button>
+
+                <!-- Export (later: connect to /export_report?project_id=...) -->
+                <button class="btn btn-outline" type="button"
+                        {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                        onclick="alert(currentLang==='ar'?'سيتم ربط تصدير التقرير لاحقاً ✅':'Export Report will be connected later ✅')">
+                    <span data-ar="تصدير التقرير" data-en="Export Report">تصدير التقرير</span>
+                </button>
+
+                <!-- Save (later: connect to DB) -->
+                <button class="btn btn-primary" type="button" onclick="alert(currentLang==='ar'?'تم الحفظ (تجريبي) ✅':'Saved (demo) ✅')">
+                    <span data-ar="حفظ" data-en="Save">حفظ</span>
+                </button>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <!-- Quick Stats -->
+            <div class="stats" style="margin-bottom:18px;">
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_name | default('—') }}</div>
+                            <div class="stat-label" data-ar="ملف البيانات" data-en="Dataset File">ملف البيانات</div>
+                        </div>
+                        <div class="stat-icon blue">📦</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_rows | default('0') }}</div>
+                            <div class="stat-label" data-ar="عدد الصفوف" data-en="Rows">عدد الصفوف</div>
+                        </div>
+                        <div class="stat-icon green">📈</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">{{ dataset_cols | default('0') }}</div>
+                            <div class="stat-label" data-ar="عدد الأعمدة" data-en="Columns">عدد الأعمدة</div>
+                        </div>
+                        <div class="stat-icon purple">🧩</div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-top">
+                        <div>
+                            <div class="stat-value">
+                                {% if analysis_type in ['Forecasting', 'Clustering'] %}
+                                    <span class="badge badge-pro" data-ar="احترافي" data-en="PRO">احترافي</span>
+                                {% else %}
+                                    <span class="badge badge-ok" data-ar="نشط" data-en="ACTIVE">نشط</span>
+                                {% endif %}
+                            </div>
+                            <div class="stat-label" data-ar="الوضع" data-en="Mode">الوضع</div>
+                        </div>
+                        <div class="stat-icon orange">🛠️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row: Dataset + Preprocessing -->
+            <div class="grid">
+                <!-- Dataset Overview / Upload -->
+                <div class="card" style="grid-column: span 7;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" data-ar="١) نظرة عامة على البيانات" data-en="1) Dataset Overview">١) نظرة عامة على البيانات</div>
+                            <div class="card-subtitle" data-ar="ارفع ملف CSV (إذا لم يُرفع بعد) واستعرض الصفوف الأولى. يستوفي هذا الخطوة متطلب البيانات في مسار العمل." data-en="Upload CSV (if not uploaded) and preview the first rows. This satisfies the dataset requirement in the activity flow.">
+                                ارفع ملف CSV (إذا لم يُرفع بعد) واستعرض الصفوف الأولى. يستوفي هذا الخطوة متطلب البيانات في مسار العمل.
+                            </div>
+                        </div>
+                        {% if dataset_uploaded %}
+                            <span class="badge badge-ok" data-ar="✅ تم الرفع" data-en="✅ Uploaded">✅ تم الرفع</span>
+                        {% else %}
+                            <span class="badge badge-warn" data-ar="⚠️ مطلوب" data-en="⚠️ Required">⚠️ مطلوب</span>
+                        {% endif %}
+                    </div>
+
+                    {% if not dataset_uploaded %}
+                        <form method="POST" action="{{ upload_action | default('#') }}" enctype="multipart/form-data">
+                            <div class="form-row">
+                                <div class="field">
+                                    <label data-ar="ملف CSV" data-en="CSV File">ملف CSV</label>
+                                    <input type="file" name="dataset" accept=".csv" />
+                                </div>
+
+                                <div class="field">
+                                    <label data-ar="ملاحظات (اختياري)" data-en="Notes (optional)">ملاحظات (اختياري)</label>
+                                    <input type="text" name="dataset_note" placeholder="مثال: بيانات المبيعات - الربع الرابع 2024" />
+                                </div>
+                            </div>
+
+                            <div class="actions">
+                                <button class="btn btn-primary" type="submit" onclick="return confirm(currentLang==='ar'?'سيتم ربط مسار الرفع لاحقاً ✅':'Upload route will be connected later ✅')">
+                                    <span data-ar="رفع البيانات" data-en="Upload Dataset">رفع البيانات</span>
+                                </button>
+                                <span class="muted" data-ar="الصيغة المسموح بها: CSV فقط." data-en="Allowed format: CSV only.">الصيغة المسموح بها: CSV فقط.</span>
+                            </div>
+                        </form>
+
+                        <div class="divider"></div>
+                        <p class="muted">
+                            <span data-ar="بعد ربط Flask، سيقوم هذا القسم بالتحقق من نوع الملف وحفظ معلومات البيانات في قاعدة البيانات وإنشاء جدول المعاينة تلقائياً." data-en="After connecting Flask, this section will validate file type, store dataset info in DB, and generate the preview table automatically.">بعد ربط Flask، سيقوم هذا القسم بالتحقق من نوع الملف وحفظ معلومات البيانات في قاعدة البيانات وإنشاء جدول المعاينة تلقائياً.</span>
+                        </p>
+                    {% else %}
+                        <div class="muted" style="margin-bottom:10px;">
+                            <b data-ar="الملف:" data-en="File:">File:</b> {{ dataset_name | default('dataset.csv') }}
+                            &nbsp;•&nbsp;
+                            <b data-ar="تاريخ الرفع:" data-en="Uploaded:">Uploaded:</b> {{ dataset_uploaded_at | default('—') }}
+                        </div>
+
+                        <div class="table-wrap">
+                            {% if preview_headers and preview_rows %}
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            {% for h in preview_headers %}
+                                                <th>{{ h }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in preview_rows %}
+                                            <tr>
+                                                {% for h in preview_headers %}
+                                                    <td>{{ row[h] }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <div style="padding:14px;">
+                                    <p class="muted"><span data-ar="ستظهر المعاينة هنا بعد ربط تحليل CSV (pandas) مع Flask." data-en="Preview will appear here after connecting CSV parsing (pandas) in Flask.">ستظهر المعاينة هنا بعد ربط تحليل CSV (pandas) مع Flask.</span></p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Preprocessing -->
+                <div class="card" style="grid-column: span 5;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" data-ar="٢) المعالجة المسبقة (بسيطة)" data-en="2) Preprocessing (Simple)">٢) المعالجة المسبقة (بسيطة)</div>
+                            <div class="card-subtitle">
+                                <span data-ar='أبسِط الأمور: معالجة القيم المفقودة والمكررة فقط. كل ما عدا ذلك اختياري "قريباً".' data-en='Keep it minimal: missing values + duplicates. Everything else is optional "Soon".'>أبسِط الأمور: معالجة القيم المفقودة والمكررة فقط. كل ما عدا ذلك اختياري "قريباً".</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-soon" data-ar="خفيفة" data-en="Lightweight">خفيفة</span>
+                    </div>
+
+                    <form method="POST" action="{{ preprocess_action | default('#') }}">
+                        <div class="checkbox">
+                            <input type="checkbox" name="handle_missing" {% if handle_missing %} checked {% endif %} />
+                            <div>
+                                <div class="label" data-ar="معالجة القيم المفقودة" data-en="Handle Missing Values">معالجة القيم المفقودة</div>
+                                <div class="hint" data-ar="حذف الصفوف أو تعبئة القيم (سنختار أبسط طريقة لاحقاً)." data-en="Drop rows or fill values (we'll choose the simplest method later).">حذف الصفوف أو تعبئة القيم (سنختار أبسط طريقة لاحقاً).</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox">
+                            <input type="checkbox" name="remove_duplicates" {% if remove_duplicates %} checked {% endif %} />
+                            <div>
+                                <div class="label" data-ar="إزالة التكرارات" data-en="Remove Duplicates">إزالة التكرارات</div>
+                                <div class="hint" data-ar="حذف الصفوف المكررة للحصول على تحليل أنظف." data-en="Remove duplicate rows for cleaner analysis.">حذف الصفوف المكررة للحصول على تحليل أنظف.</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox" style="opacity:0.75;">
+                            <input type="checkbox" disabled />
+                            <div>
+                                <div class="label" data-ar="تحليل الارتباط" data-en="Correlation Analysis">تحليل الارتباط <span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="margin-right:8px;">قريباً</span></div>
+                                <div class="hint" data-ar="ميزة متقدمة اختيارية." data-en="Advanced optional feature.">Advanced optional feature.</div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox" style="opacity:0.75;">
+                            <input type="checkbox" disabled />
+                            <div>
+                                <div class="label" data-ar="اكتشاف القيم الشاذة" data-en="Outlier Detection">اكتشاف القيم الشاذة <span class="badge badge-soon" data-ar="قريباً" data-en="Soon" style="margin-right:8px;">قريباً</span></div>
+                                <div class="hint" data-ar="ميزة متقدمة اختيارية." data-en="Advanced optional feature.">Advanced optional feature.</div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button class="btn btn-primary" type="submit"
+                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                                    onclick="return confirm(currentLang==='ar'?'سيتم ربط مسار المعالجة لاحقاً ✅':'Preprocessing route will be connected later ✅')">
+                                <span data-ar="تطبيق المعالجة" data-en="Apply Preprocessing">تطبيق المعالجة</span>
+                            </button>
+                            <button class="btn btn-outline" type="button"
+                                    {% if not dataset_uploaded %} disabled style="opacity:0.6; cursor:not-allowed;" {% endif %}
+                                    onclick="alert(currentLang==='ar'?'إعادة الضبط (تجريبي) ✅':'Reset (demo) ✅')">
+                                <span data-ar="إعادة الضبط" data-en="Reset">إعادة الضبط</span>
+                            </button>
+                        </div>
+
+                        {% if preprocess_message %}
+                            <div style="margin-top:12px;">
+                                <span class="badge badge-ok">✅</span>
+                                <span class="muted">{{ preprocess_message }}</span>
+                            </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results + Chart -->
+            <div class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" data-ar="٣) التحليل الاستكشافي والتصوير البياني" data-en="3) EDA & Visualization">٣) التحليل الاستكشافي والتصوير البياني</div>
+                            <div class="card-subtitle" data-ar="توزيع العمود الرقمي الأساسي في بياناتك." data-en="Distribution of the primary numeric column in your dataset.">توزيع العمود الرقمي الأساسي في بياناتك.</div>
+                        </div>
+                        {% if pipeline_done %}
+                            <span class="badge badge-ok" data-ar="✅ جاهز" data-en="✅ Ready">✅ جاهز</span>
+                        {% else %}
+                            <span class="badge badge-warn" data-ar="⚠️ في انتظار البيانات" data-en="⚠️ Waiting for dataset">⚠️ في انتظار البيانات</span>
+                        {% endif %}
+                    </div>
+
+                    {% if not dataset_uploaded %}
+                        <p class="muted"><span data-ar="ارفع ملف CSV لإنشاء الرسم البياني تلقائياً." data-en="Upload a CSV to generate the chart automatically.">ارفع ملف CSV لإنشاء الرسم البياني تلقائياً.</span></p>
+                    {% else %}
+                        <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+                            <!-- Chart -->
+                            <div style="flex:2; min-width:300px;">
+                                <div class="card-subtitle" style="margin-bottom:8px;">
+                                    <span data-ar="العمود:" data-en="Column:">العمود:</span> <b>{{ chart_column | default('—') }}</b>
+                                </div>
+                                <div class="chart-box" style="position:relative; height:260px;">
+                                    <canvas id="arcaneChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- إحصائيات التحليل الاستكشافي -->
+                            {% if result %}
+                            <div style="flex:1; min-width:200px;">
+                                <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                                    <tr style="background:#f1f5f9;"><td style="padding:8px 10px; font-weight:600;" data-ar="المقياس" data-en="Metric">المقياس</td><td style="padding:8px 10px; font-weight:600;" data-ar="القيمة" data-en="Value">القيمة</td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;" data-ar="إجمالي الصفوف" data-en="Total Rows">إجمالي الصفوف</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.rows_count }}</b></td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;" data-ar="الأعمدة" data-en="Columns">الأعمدة</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.cols_count }}</b></td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;" data-ar="مفقود (قبل)" data-en="Missing (before)">مفقود (قبل)</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">{{ result.missing_before }}</td></tr>
+                                    <tr><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;" data-ar="مفقود (بعد)" data-en="Missing (after)">مفقود (بعد)</td><td style="padding:7px 10px; border-bottom:1px solid #e2e8f0;">{{ result.missing_after }}</td></tr>
+                                    <tr><td style="padding:7px 10px;" data-ar="التكرارات المحذوفة" data-en="Duplicates Removed">التكرارات المحذوفة</td><td style="padding:7px 10px;">{{ result.duplicates_removed }}</td></tr>
+                                </table>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- نتائج نموذج التعلم الآلي -->
+            {% if pipeline_done and result %}
+            <div class="grid">
+                <!-- Model Results -->
+                <div class="card" style="grid-column: span 6;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" data-ar="٤) نتائج النموذج" data-en="4) Model Results">4) Model Results — {{ analysis_type }}</div>
+                            <div class="card-subtitle" data-ar="تم تدريب النموذج على 80% من البيانات واختباره على 20%." data-en="Model trained on 80% of data, tested on 20%.">Model trained on 80% of data, tested on 20%.</div>
+                        </div>
+                        <span class="badge badge-ok" data-ar="✅ مُدرَّب" data-en="✅ Trained">✅ Trained</span>
+                    </div>
+
+                    {% if analysis_type == 'Classification' %}
+                        <div style="overflow-x:auto;">
+                        <table style="width:100%; font-size:14px; border-collapse:collapse; margin-top:10px; min-width:0;">
+                            <tr style="background:#f1f5f9;">
+                                <td style="padding:10px; font-weight:600; white-space:nowrap;" data-ar="المقياس" data-en="Metric">Metric</td>
+                                <td style="padding:10px; font-weight:600; white-space:nowrap;" data-ar="النتيجة" data-en="Score">Score</td>
+                                <td style="padding:10px; font-weight:600; width:45%;" data-ar="الشريط" data-en="Bar">Bar</td>
+                            </tr>
+                            {% for metric_en, metric_ar, val in [
+                                ('Accuracy',  'الدقة',  result.model_accuracy),
+                                ('Precision', 'الدقة الإيجابية', result.model_precision),
+                                ('Recall',    'الاستدعاء',    result.model_recall),
+                                ('F1 Score',  'درجة F1',  result.model_f1)
+                            ] %}
+                            {% if val is not none %}
+                            <tr>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;" data-ar="{{ metric_ar }}" data-en="{{ metric_en }}">{{ metric_en }}</td>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap;"><b>{{ (val * 100) | round(1) }}%</b></td>
+                                <td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;">
+                                    <div style="height:8px; background:#e2e8f0; border-radius:4px; width:100%;">
+                                        <div style="height:8px; background:linear-gradient(90deg,#667eea,#764ba2); border-radius:4px; width:{{ (val*100)|int }}%;"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </table>
+                        </div>
+
+                    {% elif analysis_type == 'Regression' or analysis_type == 'Forecasting' %}
+                        <table style="width:100%; font-size:14px; border-collapse:collapse; margin-top:10px;">
+                            <tr style="background:#f1f5f9;">
+                                <td style="padding:10px; font-weight:600;" data-ar="المقياس" data-en="Metric">Metric</td>
+                                <td style="padding:10px; font-weight:600;" data-ar="القيمة" data-en="Value">Value</td>
+                            </tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;" data-ar="معامل التحديد R²" data-en="R² Score">R² Score</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_r2 }}</b></td></tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;" data-ar="متوسط مربع الخطأ" data-en="MSE">MSE</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_mse }}</b></td></tr>
+                            <tr><td style="padding:9px 10px;" data-ar="متوسط الخطأ المطلق" data-en="MAE">MAE</td><td style="padding:9px 10px;"><b>{{ result.model_mae }}</b></td></tr>
+                        </table>
+
+                    {% elif analysis_type == 'Clustering' %}
+                        <table style="width:100%; font-size:14px; border-collapse:collapse; margin-top:10px;">
+                            <tr style="background:#f1f5f9;">
+                                <td style="padding:10px; font-weight:600;" data-ar="المقياس" data-en="Metric">Metric</td>
+                                <td style="padding:10px; font-weight:600;" data-ar="القيمة" data-en="Value">Value</td>
+                            </tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;" data-ar="عدد المجموعات (k)" data-en="Optimal Clusters (k)">Optimal Clusters (k)</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_clusters }}</b></td></tr>
+                            <tr><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;" data-ar="درجة الصمت" data-en="Silhouette Score">Silhouette Score</td><td style="padding:9px 10px; border-bottom:1px solid #e2e8f0;"><b>{{ result.model_silhouette }}</b></td></tr>
+                            <tr><td style="padding:9px 10px;" data-ar="مؤشر ديفيز-بولدن" data-en="Davies-Bouldin Index">Davies-Bouldin Index</td><td style="padding:9px 10px;"><b>{{ result.model_davies_bouldin }}</b></td></tr>
+                        </table>
+                    {% endif %}
+
+                    {% if sector_warnings %}
+                    <div style="margin-top:14px; background:#fffbeb; border:1.5px solid #f59e0b; border-radius:10px; padding:12px 14px;">
+                        <b style="color:#92400e;">⚠️ Dataset Warning:</b>
+                        {% for w in sector_warnings %}
+                        <p style="color:#92400e; font-size:13px; margin-top:4px;">{{ w }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Feature Importance -->
+                <div class="card" style="grid-column: span 6;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title" data-ar="٥) أهمية الميزات" data-en="5) Feature Importance">5) Feature Importance</div>
+                            <div class="card-subtitle" data-ar="أبرز الميزات المؤثرة في تنبؤات النموذج." data-en="Top features influencing the model predictions.">Top features influencing the model predictions.</div>
+                        </div>
+                    </div>
+                    {% if feature_importance %}
+                        <div style="margin-top:10px;">
+                            <canvas id="featureChart" height="200"></canvas>
+                        </div>
+                    {% else %}
+                        <p class="muted" style="margin-top:12px;"><span data-ar="ستظهر أهمية الميزات بعد تشغيل المسار." data-en="Feature importance will appear after running the pipeline.">Feature importance will appear after running the pipeline.</span></p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- الإجراءات -->
+            <div class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        {% if pipeline_done %}
+                            <span class="badge badge-ok" style="padding:10px 16px; font-size:13px;" data-ar="✅ اكتمل المسار" data-en="✅ Pipeline Completed">✅ اكتمل المسار</span>
+                        {% endif %}
+
+                        <button class="btn btn-outline" onclick="window.location.href='/dashboard'" data-ar="🏠 العودة للرئيسية" data-en="🏠 Back to Dashboard">🏠 العودة للرئيسية</button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="muted" style="text-align:center; padding:10px 0 20px;">
+                <span data-ar="ARCANE • منصة تحليلات مدعومة بالذكاء الاصطناعي • جامعة تبوك 2025" data-en="ARCANE • AI-Powered Analytics Platform • University of Tabuk 2025">ARCANE • منصة تحليلات مدعومة بالذكاء الاصطناعي • جامعة تبوك 2025</span>
+            </p>
+
+        </section>
+    </main>
+
+    <!-- Chart.js -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // رسم بياني لتوزيع التحليل الاستكشافي
+        (function () {
+            const hasData = {{ 'true' if chart_data else 'false' }};
+            const labels  = hasData ? {{ chart_labels | safe }} : ['A','B','C','D','E'];
+            const data    = hasData ? {{ chart_data   | safe }} : [4,7,3,9,5];
+            const ctx = document.getElementById('arcaneChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '{{ chart_column | default("القيمة") }}',
+                        data: data,
+                        backgroundColor: 'rgba(102,126,234,0.7)',
+                        borderColor: '#667eea',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        })();
+
+        // رسم بياني لأهمية الميزات
+        {% if feature_importance %}
+        (function () {
+            const fi = {{ feature_importance | safe }};
+            const labels = Object.keys(fi);
+            const data   = Object.values(fi).map(v => (v * 100).toFixed(1));
+            const ctx = document.getElementById('featureChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'الأهمية (%)',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(102,126,234,0.8)','rgba(118,75,162,0.8)',
+                            'rgba(16,185,129,0.8)','rgba(245,158,11,0.8)',
+                            'rgba(239,68,68,0.8)','rgba(59,130,246,0.8)',
+                            'rgba(168,85,247,0.8)','rgba(20,184,166,0.8)'
+                        ],
+                        borderRadius: 5,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, max: 100 } }
+                }
+                       });
+        })();
+        {% endif %}
+
+        function showLoading() {
+            const btn = document.querySelector('#runForm button');
+            if (btn) { btn.textContent = '⏳ جاري التشغيل...'; btn.disabled = true; }
+        }
+
+        // ===== Language Switch =====
+        let currentLang = 'en';
+        // Initialize English on load
+        document.addEventListener('DOMContentLoaded', function() {
+            setLang('en');
+            document.getElementById('btn-en').classList.add('active');
+            document.getElementById('btn-ar').classList.remove('active');
+        });
+
+        function setLang(lang) {
+            currentLang = lang;
+            const isAr = lang === 'ar';
+
+            // Toggle html dir & lang
+            document.documentElement.lang = isAr ? 'ar' : 'en';
+            document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+            document.body.style.direction = isAr ? 'rtl' : 'ltr';
+
+            // Toggle sidebar position
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            if (isAr) {
+                sidebar.style.right = '0';
+                sidebar.style.left = 'auto';
+                mainContent.style.marginRight = '260px';
+                mainContent.style.marginLeft = '0';
+            } else {
+                sidebar.style.left = '0';
+                sidebar.style.right = 'auto';
+                mainContent.style.marginLeft = '260px';
+                mainContent.style.marginRight = '0';
+            }
+
+            // Toggle all elements with data-ar / data-en
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = isAr ? el.dataset.ar : el.dataset.en;
+            });
+
+            // Toggle topbar status badge (has Jinja content so handle separately)
+            document.querySelectorAll('.badge[data-ar][data-en]').forEach(el => {
+                el.textContent = isAr ? el.dataset.ar : el.dataset.en;
+            });
+
+            // Toggle topbar paragraph labels that contain dynamic <b> values
+            const topbarP = document.querySelector('.topbar-left p');
+            if (topbarP) {
+                const sectorVal = topbarP.querySelector('b:nth-of-type(1)')?.textContent || '';
+                const analysisVal = topbarP.querySelector('b:nth-of-type(2)')?.textContent || '';
+                const statusBadge = topbarP.querySelector('.badge');
+                const statusHtml = statusBadge ? statusBadge.outerHTML : '';
+                if (isAr) {
+                    topbarP.innerHTML = `القطاع: <b>${sectorVal}</b> &nbsp;•&nbsp; نوع التحليل: <b>${analysisVal}</b> &nbsp;•&nbsp; الحالة: ${statusHtml}`;
+                } else {
+                    topbarP.innerHTML = `Sector: <b>${sectorVal}</b> &nbsp;•&nbsp; Analysis: <b>${analysisVal}</b> &nbsp;•&nbsp; Status: ${statusHtml}`;
+                }
+                // Re-apply data-ar/en on fresh badge
+                const newBadge = topbarP.querySelector('.badge');
+                if (newBadge) {
+                    newBadge.textContent = isAr ? newBadge.dataset.ar : newBadge.dataset.en;
+                }
+            }
+
+            // Toggle subtitle with complex content (has data-ar on parent div)
+            document.querySelectorAll('.card-subtitle[data-ar][data-en]').forEach(el => {
+                el.textContent = isAr ? el.dataset.ar : el.dataset.en;
+            });
+
+            // Active/inactive buttons
+            document.getElementById('btn-ar').classList.toggle('active', isAr);
+            document.getElementById('btn-en').classList.toggle('active', !isAr);
+
+            // Toggle table text-align
+            document.querySelectorAll('th, td').forEach(el => {
+                el.style.textAlign = isAr ? 'right' : 'left';
+            });
+
+            // Toggle file info label
+            const fileInfoDiv = document.querySelector('.muted b');
+            if (fileInfoDiv) {
+                const siblings = document.querySelectorAll('.muted b');
+                if (siblings.length >= 2) {
+                    siblings[0].textContent = isAr ? 'الملف:' : 'File:';
+                    if (siblings[1]) siblings[1].textContent = isAr ? 'تاريخ الرفع:' : 'Uploaded:';
+                }
+            }
+
+            // Regression table header
+            document.querySelectorAll('table td[data-ar][data-en]').forEach(el => {
+                el.textContent = isAr ? el.dataset.ar : el.dataset.en;
+            });
+        }
+    </script>
+
+</body>
+</html>
